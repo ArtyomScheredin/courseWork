@@ -11,8 +11,8 @@ public class Utils {
         String sql = "SELECT g.name, ROUND(AVG(m.value), ?)\n" +
                      "FROM marks AS m\n" +
                      "         JOIN people AS p ON m.student_id = p.id\n" +
-                     "         JOIN groups AS g ON g.id = p.group_id\n" +
-                     "GROUP BY g.id;";
+                     "         JOIN groups AS g ON g.group_id = p.group_id\n" +
+                     "GROUP BY g.group_id;";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, precision);
             try (ResultSet rs = statement.executeQuery()) {
