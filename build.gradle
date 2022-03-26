@@ -1,0 +1,24 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'spbstu.deans_office'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.4'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.6.4'
+    runtimeOnly 'org.postgresql:postgresql:42.3.3'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.4'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
