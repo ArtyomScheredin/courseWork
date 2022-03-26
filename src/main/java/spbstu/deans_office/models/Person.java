@@ -1,4 +1,6 @@
-package spbstu.deans_office.model;
+package spbstu.deans_office.models;
+
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,36 +10,51 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity(name="Person")
-@Table(name="people")
+@Entity(name = "Person")
+@Table(name = "people")
 public class Person {
 
     @Id
     @SequenceGenerator(
-            name ="person_sequence",
-            sequenceName = "product_id_seq",
+            name = "person_sequence",
+            sequenceName = "person_id_seq",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "person_generator"
+            generator = "person_sequence"
     )
     @Column(name = "person_id")
     private Long person_id = 0L;
+
     @Column(name = "first_name")
     private String first_name = "";
+
     @Column(name = "last_name")
     private String last_name = "";
+
     @Column(name = "patronymic")
     private String patronymic = "";
+
     @ManyToOne
-    @JoinColumn(name="group_id", foreignKey=@ForeignKey(name = "person_group_id_fkey"))
+    @JoinColumn(name = "group_id", foreignKey = @ForeignKey(name = "person_group_id_fkey"))
     private Group group_id;
+
     @Column(name = "type")
     private Character type;
+
+    @OneToMany(mappedBy = "student_id")
+    private Set<Mark> marks_student;
+
+    @OneToMany(mappedBy = "teacher_id")
+    private Set<Mark> marks_teacher;
+
+    public Person() {
+    }
 
     public Person(String first_name, String last_name, String patronymic, Group group_id, Character type) {
         this.first_name = first_name;
@@ -79,11 +96,13 @@ public class Person {
         this.group_id = group_id;
     }
 
-    public Character getType() {
-        return type;
+    public Type getType() {
+        return (type == 's') ? Type.STUDENT : Type.TEACHER;
     }
 
-    public void setType(Character type) {
-        this.type = type;
+    public void setType(Type type) {
+        this.type = (type == Type.STUDENT) ? 's' : 't';
     }
+
+    public enum Type {STUDENT, TEACHER}
 }

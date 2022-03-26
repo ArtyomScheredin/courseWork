@@ -1,10 +1,13 @@
-package spbstu.deans_office.model;
+package spbstu.deans_office.models;
+
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -25,6 +28,9 @@ public class Subject {
     private Long subject_id = 0L;
     @Column(name = "name")
     private String name = "";
+
+    @OneToMany(mappedBy = "subject_id")
+    private Set<Mark> marks;
 
     public Subject(String name) {
         this.name = name;

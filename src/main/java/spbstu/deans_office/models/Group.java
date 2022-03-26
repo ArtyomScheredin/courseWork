@@ -1,4 +1,4 @@
-package spbstu.deans_office.model;
+package spbstu.deans_office.models;
 
 import java.util.Set;
 
