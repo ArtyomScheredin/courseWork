@@ -11,18 +11,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.sun.istack.NotNull;
+
 @Entity(name = "Mark")
 @Table(name = "marks")
 public class Mark {
     @Id
     @SequenceGenerator(
-            name = "mark_seq_gen",
-            sequenceName = "mark_seq_gen",
+            name = "mark_sequence",
+            sequenceName = "mark_id_seq",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "mark_seq_gen"
+            generator = "mark_sequence"
     )
     @Column(name = "mark_id")
     private Long mark_id = 0L;
@@ -39,7 +41,7 @@ public class Mark {
     @JoinColumn(name = "teacher_id", foreignKey = @ForeignKey(name = "product_teacher_id_fkey"))
     private Person teacher;
 
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     private Integer value;
 
     public Mark(Long mark_id, Person student, Subject subject, Person teacher, Integer value) {

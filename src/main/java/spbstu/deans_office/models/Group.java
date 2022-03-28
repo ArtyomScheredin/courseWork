@@ -30,7 +30,7 @@ public class Group {
     @Column(name = "name")
     private String name ="";
 
-    @OneToMany(mappedBy = "group_id")
+    @OneToMany(mappedBy = "group")
     private Set<Person> people;
 
     public Group() {

@@ -29,7 +29,7 @@ public class Subject {
     @Column(name = "name")
     private String name = "";
 
-    @OneToMany(mappedBy = "subject_id")
+    @OneToMany(mappedBy = "subject")
     private Set<Mark> marks;
 
     public Subject(String name) {

@@ -42,25 +42,35 @@ public class Person {
 
     @ManyToOne
     @JoinColumn(name = "group_id", foreignKey = @ForeignKey(name = "person_group_id_fkey"))
-    private Group group_id;
+    private Group group;
 
     @Column(name = "type")
     private Character type;
 
-    @OneToMany(mappedBy = "student_id")
+    @OneToMany(mappedBy = "student")
     private Set<Mark> marks_student;
 
-    @OneToMany(mappedBy = "teacher_id")
+    @OneToMany(mappedBy = "teacher")
     private Set<Mark> marks_teacher;
 
     public Person() {
     }
 
-    public Person(String first_name, String last_name, String patronymic, Group group_id, Character type) {
+    public Person(Long person_id, String first_name,
+                  String last_name, String patronymic, Group group, Character type) {
+        this.person_id = person_id;
         this.first_name = first_name;
         this.last_name = last_name;
         this.patronymic = patronymic;
-        this.group_id = group_id;
+        this.group = group;
+        this.type = type;
+    }
+
+    public Person(String first_name, String last_name, String patronymic, Group group, Character type) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.patronymic = patronymic;
+        this.group = group;
         this.type = type;
     }
 
@@ -88,12 +98,12 @@ public class Person {
         this.patronymic = patronymic;
     }
 
-    public Group getGroup_id() {
-        return group_id;
+    public Group getGroup() {
+        return group;
     }
 
     public void setGroup_id(Group group_id) {
-        this.group_id = group_id;
+        this.group = group;
     }
 
     public Type getType() {
