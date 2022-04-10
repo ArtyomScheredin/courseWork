@@ -11,8 +11,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GroupRepository extends CrudRepository<Group, Long> {
 
-    @Query(value = "SELECT * FROM groups LIMIT ?1;", nativeQuery = true)
-    List<Group> findAllLimitBy(Integer limit);
-
-    List<Group> findGroupByName(String groupName);
 }

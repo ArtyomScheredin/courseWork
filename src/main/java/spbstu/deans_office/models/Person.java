@@ -2,6 +2,7 @@ package spbstu.deans_office.models;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -15,7 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity(name = "Person")
-@Table(name = "people")
+@Table(name = "person")
 public class Person {
 
     @Id
@@ -47,10 +48,10 @@ public class Person {
     @Column(name = "type")
     private Character type;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Mark> marks_student;
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private Set<Mark> marks_teacher;
 
     public Person() {
@@ -62,7 +63,7 @@ public class Person {
         this.first_name = first_name;
         this.last_name = last_name;
         this.patronymic = patronymic;
-        this.group = group;
+       this.group = group;
         this.type = type;
     }
 
@@ -70,8 +71,12 @@ public class Person {
         this.first_name = first_name;
         this.last_name = last_name;
         this.patronymic = patronymic;
-        this.group = group;
+       this.group = group;
         this.type = type;
+    }
+
+    public Long getPerson_id() {
+        return person_id;
     }
 
     public String getFirst_name() {
@@ -102,7 +107,7 @@ public class Person {
         return group;
     }
 
-    public void setGroup_id(Group group_id) {
+   public void setGroup_id(Group group_id) {
         this.group = group;
     }
 
@@ -115,4 +120,16 @@ public class Person {
     }
 
     public enum Type {STUDENT, TEACHER}
+
+    @Override
+    public String toString() {
+        return "Person{" +
+               "person_id=" + person_id +
+               ", first_name='" + first_name + '\'' +
+               ", last_name='" + last_name + '\'' +
+               ", patronymic='" + patronymic + '\'' +
+               //", group=" + group.getName() +
+               ", type=" + type +
+               '}';
+    }
 }

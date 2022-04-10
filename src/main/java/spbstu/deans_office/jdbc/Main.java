@@ -1,4 +1,5 @@
 package spbstu.deans_office.jdbc;
+/*
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,3 +33,4 @@ public class Main {
     }
 }
 
+*/

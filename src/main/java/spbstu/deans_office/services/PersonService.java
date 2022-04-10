@@ -5,9 +5,9 @@ import spbstu.deans_office.models.Person;
 import spbstu.deans_office.utils.Utils;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PersonService {
-    List<Person> getAllLimitBy(Integer limit);
     Double getAvgForPerson(long student_id);
     List<Person> getStudentOrderedByAVGMark();
     void deleteIfAVGMarkLessThan(double threshold);
@@ -16,5 +16,6 @@ public interface PersonService {
     void updatePerson(PersonDTO person);
     List<Person> getPeopleByGroupId(Long group_id);
     List<Person> getPeopleWithMark(Integer value);
-    List<Utils.Pair<Person, Double>> getAVGForTeachers();
+    Map<String, Double> getAVGForTeachers();
+    Map<String, Double> getAVGForStudents();
 }

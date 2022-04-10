@@ -11,10 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import com.sun.istack.NotNull;
-
 @Entity(name = "Mark")
-@Table(name = "marks")
+@Table(name = "mark")
 public class Mark {
     @Id
     @SequenceGenerator(
@@ -27,18 +25,18 @@ public class Mark {
             generator = "mark_sequence"
     )
     @Column(name = "mark_id")
-    private Long mark_id = 0L;
+    private Long mark_id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", foreignKey = @ForeignKey(name = "product_student_id_fkey"))
+    @JoinColumn(name = "student_id")
     private Person student;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(name = "subject_teacher_id_fkey"))
+    @JoinColumn(name = "subject_id", foreignKey = @ForeignKey(name = "subject_id_fkey"))
     private Subject subject;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id", foreignKey = @ForeignKey(name = "product_teacher_id_fkey"))
+    @JoinColumn(name = "teacher_id", foreignKey = @ForeignKey(name = "mark_teacher_id_fkey"))
     private Person teacher;
 
     @Column(name = "value", nullable = false)
@@ -100,5 +98,16 @@ public class Mark {
 
     public void setValue(Integer value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "Mark{" +
+               "mark_id=" + mark_id +
+               ", student=" + student.getLast_name() +
+               ", subject=" + subject.getName() +
+               ", teacher=" + teacher.getLast_name() +
+               ", value=" + value +
+               '}';
     }
 }

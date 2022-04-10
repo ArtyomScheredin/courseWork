@@ -10,6 +10,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SubjectRepository extends CrudRepository<Subject, Long> {
-    @Query(value = "SELECT * FROM subjects LIMIT ?1;", nativeQuery = true)
-    List<Subject> findAllLimitBy(Integer limit);
 }

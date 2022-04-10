@@ -6,12 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Utils {
-    public static void printMarksDistributionOnGroups(Connection connection,
+ /*   public static void printMarksDistributionOnGroups(Connection connection,
                                                       int precision) throws SQLException {
         String sql = "SELECT g.name, ROUND(AVG(m.value), ?)\n" +
-                     "FROM marks AS m\n" +
-                     "         JOIN people AS p ON m.student_id = p.id\n" +
-                     "         JOIN groups AS g ON g.group_id = p.group_id\n" +
+                     "FROM mark AS m\n" +
+                     "         JOIN person AS p ON m.student_id = p.id\n" +
+                     "         JOIN "group" AS g ON g.group_id = p.group_id\n" +
                      "GROUP BY g.group_id;";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, precision);
@@ -27,8 +27,8 @@ public class Utils {
 
     public static void printStudentsWithGoodMarks(Connection connection) throws SQLException {
         String sql = "SELECT p.first_name, p.last_name, ROUND(AVG(m.value), 2) AS average_rate\n" +
-                     "FROM people AS p\n" +
-                     "         JOIN marks AS m\n" +
+                     "FROM person AS p\n" +
+                     "         JOIN mark AS m\n" +
                      "              ON p.id = m.id\n" +
                      "WHERE p.type = 's'\n" +
                      "GROUP BY p.id\n" +
@@ -44,7 +44,7 @@ public class Utils {
     }
 
     public static void insertMark(Connection connection, int studentID, int subjectID, int teacherID, int value) throws SQLException {
-        String sql = "INSERT INTO marks (student_id, subject_id, teacher_id, value)\n" +
+        String sql = "INSERT INTO mark (student_id, subject_id, teacher_id, value)\n" +
                      "VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -56,5 +56,5 @@ public class Utils {
         }
         System.out.println("Insertion has been completed succesfully!");
     }
-
+*/
 }

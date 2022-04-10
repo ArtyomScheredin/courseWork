@@ -2,6 +2,7 @@ package spbstu.deans_office.models;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity(name = "Group")
-@Table(name = "groups")
+@Table(name = "group")
 public class Group {
 
     @Id
@@ -30,8 +31,8 @@ public class Group {
     @Column(name = "name")
     private String name ="";
 
-    @OneToMany(mappedBy = "group")
-    private Set<Person> people;
+//    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+//    private Set<Person> people;
 
     public Group() {
     }
@@ -54,5 +55,13 @@ public class Group {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+               "group_id=" + group_id +
+               ", name='" + name + '\'' +
+               '}';
     }
 }

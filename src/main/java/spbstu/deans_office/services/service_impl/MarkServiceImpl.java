@@ -13,7 +13,11 @@ import spbstu.deans_office.repositories.SubjectRepository;
 import spbstu.deans_office.services.MarkService;
 import spbstu.deans_office.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -24,17 +28,15 @@ public class MarkServiceImpl implements MarkService {
     private final MarkRepository markRepository;
     private final PersonRepository personRepository;
     private final SubjectRepository subjectRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    public MarkServiceImpl(MarkRepository markRepository, PersonRepository personRepository, SubjectRepository subjectRepository, GroupRepository groupRepository) {
+    public MarkServiceImpl(MarkRepository markRepository, PersonRepository personRepository,
+                           SubjectRepository subjectRepository, GroupRepository groupRepository) {
         this.markRepository = markRepository;
         this.personRepository = personRepository;
         this.subjectRepository = subjectRepository;
-    }
-
-    @Override
-    public List<Mark> getAllLimitBy(Integer limit) {
-        return markRepository.findAllLimitBy(limit);
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -70,7 +72,7 @@ public class MarkServiceImpl implements MarkService {
 
         Person teacher = personRepository.findById(markDTO.teacher_id())
                 .orElseThrow(() -> new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + markDTO.teacher_id()));
-        if (student.getType() != Person.Type.TEACHER) {
+        if (teacher.getType() != Person.Type.TEACHER) {
             throw new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + markDTO.teacher_id());
         }
 
@@ -80,7 +82,7 @@ public class MarkServiceImpl implements MarkService {
         if (markRepository.existsById(markDTO.mark_id())) {
             throw new ApiRequestException(Utils.WRONG_MARK_ID_MESSAGE + markDTO.mark_id());
         }
-        markRepository.save(new Mark(markDTO.mark_id(), student, subject, teacher, markDTO.value()));
+        markRepository.save(new Mark(student, subject, teacher, markDTO.value()));
     }
 
     @Override
@@ -111,7 +113,7 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public List<Mark> getMarksByStudent(String studentName) {
+    public List<Mark> getMarksByStudentSecondName(String studentName) {
         List<Mark> result = markRepository.findAllByStudentName(studentName);
         if (result.isEmpty()) {
             throw new ApiRequestException(Utils.WRONG_GROUP_ID_MESSAGE);
@@ -120,16 +122,46 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public List<Utils.Pair<Group, Double>> getAvgForGroups() {
-     /*   List<Utils.Pair<Group, Double>> result = markRepository.getAVGForGroups();
-        return result;*/
-        return null;
+    public Map<String, Double> getAvgForGroups() {
+        Map<String, Double> result = new HashMap<>();
+        groupRepository.findAll().forEach(group -> {
+            String name = groupRepository.findById(group.getGroup_id()).get().getName();
+            Double averageMark = markRepository.getAVGForGroup(group.getGroup_id());
+            result.put(name, averageMark);
+        });
+        return result;
     }
 
     @Override
-    public List<Utils.Pair<Subject, Double>> getAvgForSubjects() {
-        /*List<Utils.Pair<Subject, Double>> result = markRepository.getAVGForSubjects();
-        return result;*/
-        return null;
+    public Map<String, Double> getAvgForSubjects() {
+        Map<String, Double> result = new HashMap<>();
+        subjectRepository.findAll().forEach(group -> {
+            String name = subjectRepository.findById(group.getSubject_id()).get().getName();
+            Double averageMark = markRepository.getAVGForSubject(group.getSubject_id());
+            result.put(name, averageMark);
+        });
+        return result;
+    }
+
+    @Override
+    public List<Mark> getMarksByTeacher(long id) {
+        Optional<Person> teacher = personRepository.findById(id);
+        teacher.orElseThrow(() -> new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + id));
+        if (!teacher.get().getType().equals(Person.Type.TEACHER)) {
+            throw new ApiRequestException("Can't find teacher with the name" + id);
+        }
+        return markRepository.findAllByTeacherId(id);
+    }
+
+    @Override
+    public Map<String, Double> getMarksAVGByStudentOnAllSubjects(long student_id) {
+        Map<String, Double> result = new HashMap<>();
+        subjectRepository.findAll().forEach(subject -> {
+            String subjectName = subject.getName();
+            Double avgSubject = markRepository.getAVGByPersonAndSubject(student_id, subject.getSubject_id());
+            if (avgSubject != null) {
+                result.put(subjectName, avgSubject);
+            }});
+        return result;
     }
 }
