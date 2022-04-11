@@ -2,7 +2,6 @@ package spbstu.deans_office.services.service_impl;
 
 import spbstu.deans_office.DTO.MarkDTO;
 import spbstu.deans_office.exceptions.ApiRequestException;
-import spbstu.deans_office.models.Group;
 import spbstu.deans_office.models.Mark;
 import spbstu.deans_office.models.Person;
 import spbstu.deans_office.models.Subject;
@@ -13,7 +12,6 @@ import spbstu.deans_office.repositories.SubjectRepository;
 import spbstu.deans_office.services.MarkService;
 import spbstu.deans_office.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +96,7 @@ public class MarkServiceImpl implements MarkService {
     public List<Mark> getMarksByGroup(String groupName) {
         List<Mark> result = markRepository.findAllByGroupName(groupName);
         if (result.isEmpty()) {
-            throw new ApiRequestException(Utils.WRONG_GROUP_ID_MESSAGE);
+            throw new ApiRequestException(Utils.WRONG_GROUP_NAME_MESSAGE + groupName);
         }
         return result;
     }
@@ -125,8 +123,8 @@ public class MarkServiceImpl implements MarkService {
     public Map<String, Double> getAvgForGroups() {
         Map<String, Double> result = new HashMap<>();
         groupRepository.findAll().forEach(group -> {
-            String name = groupRepository.findById(group.getGroup_id()).get().getName();
-            Double averageMark = markRepository.getAVGForGroup(group.getGroup_id());
+            String name = groupRepository.findById(group.getGroupId()).get().getName();
+            Double averageMark = markRepository.getAVGForGroup(group.getGroupId());
             result.put(name, averageMark);
         });
         return result;
@@ -136,8 +134,8 @@ public class MarkServiceImpl implements MarkService {
     public Map<String, Double> getAvgForSubjects() {
         Map<String, Double> result = new HashMap<>();
         subjectRepository.findAll().forEach(group -> {
-            String name = subjectRepository.findById(group.getSubject_id()).get().getName();
-            Double averageMark = markRepository.getAVGForSubject(group.getSubject_id());
+            String name = subjectRepository.findById(group.getSubjectId()).get().getName();
+            Double averageMark = markRepository.getAVGForSubject(group.getSubjectId());
             result.put(name, averageMark);
         });
         return result;
@@ -158,7 +156,7 @@ public class MarkServiceImpl implements MarkService {
         Map<String, Double> result = new HashMap<>();
         subjectRepository.findAll().forEach(subject -> {
             String subjectName = subject.getName();
-            Double avgSubject = markRepository.getAVGByPersonAndSubject(student_id, subject.getSubject_id());
+            Double avgSubject = markRepository.getAVGByPersonAndSubject(student_id, subject.getSubjectId());
             if (avgSubject != null) {
                 result.put(subjectName, avgSubject);
             }});

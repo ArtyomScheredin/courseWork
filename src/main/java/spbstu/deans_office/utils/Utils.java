@@ -6,6 +6,7 @@ public class Utils {
     public final static String WRONG_SUBJECT_ID_MESSAGE = "WRONG subject id. Can't find subject with id ";
     public final static String WRONG_MARK_ID_MESSAGE = "WRONG mark id. Can't nark subject with id ";
     public final static String WRONG_GROUP_ID_MESSAGE = "WRONG group id. Can't find group with id ";
+    public final static String WRONG_GROUP_NAME_MESSAGE = "WRONG group name. Can't find group with name ";
     public final static String WRONG_PERSON_ID_MESSAGE = "WRONG person id. Can't find person with id ";
 
     public final static int MARK_VALUE_LOWER_BOUND = 0;

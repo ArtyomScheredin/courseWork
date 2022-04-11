@@ -11,7 +11,6 @@ import spbstu.deans_office.repositories.SubjectRepository;
 import spbstu.deans_office.services.PersonService;
 import spbstu.deans_office.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +47,8 @@ public class PersonServiceImpl implements PersonService {
         HashMap<String, Double> result = new HashMap<>();
         List<Person> teachers = personRepository.findAllByType('s');
         teachers.forEach(person -> {
-            String name = person.getLast_name();
-            Double avgMarks = markRepository.getAVGForStudent(person.getPerson_id());
+            String name = person.getLastName();
+            Double avgMarks = markRepository.getAVGForStudent(person.getPersonId());
             result.put(name, avgMarks);
         });
         return result;
@@ -122,8 +121,8 @@ public class PersonServiceImpl implements PersonService {
         HashMap<String, Double> result = new HashMap<>();
         List<Person> teachers = personRepository.findAllByType('t');
         teachers.forEach(person -> {
-            String name = person.getLast_name();
-            Double avgMarks = markRepository.getAVGForTeacher(person.getPerson_id());
+            String name = person.getLastName();
+            Double avgMarks = markRepository.getAVGForTeacher(person.getPersonId());
             result.put(name, avgMarks);
         });
         return result;

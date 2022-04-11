@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PersonRepository extends CrudRepository<Person, Long> {
 
-    @Query("select p from Person as p where p.group.group_id=?1")
+    @Query("select p from Person as p where p.group.groupId=?1")
     List<Person> findAllByGroup(long group_id);
 
     List<Person> findAllByType(Character type);

@@ -2,8 +2,12 @@ package spbstu.deans_office.configs;
 
 
 import spbstu.deans_office.DTO.MarkDTO;
-import spbstu.deans_office.DTO.PersonDTO;
-import spbstu.deans_office.models.Mark;
+import spbstu.deans_office.models.Group;
+import spbstu.deans_office.models.Person;
+import spbstu.deans_office.models.Subject;
+import spbstu.deans_office.repositories.GroupRepository;
+import spbstu.deans_office.repositories.PersonRepository;
+import spbstu.deans_office.repositories.SubjectRepository;
 import spbstu.deans_office.services.MarkService;
 import spbstu.deans_office.services.PersonService;
 
@@ -18,32 +22,48 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class baseConfig {
+public class TestCommands {
     private static final int PRINT_LIMIT = 10;
 
     private final MarkService markService;
     private final PersonService personService;
+    private final GroupRepository groupRepository;
+    private final SubjectRepository subjectRepository;
+    private final PersonRepository personRepository;
 
     @Autowired
-    public baseConfig(MarkService markService, PersonService personService) {
+    public TestCommands(MarkService markService,
+                        PersonService personService,
+                        GroupRepository groupRepository,
+                        SubjectRepository subjectRepository,
+                        PersonRepository personRepository) {
         this.markService = markService;
         this.personService = personService;
+        this.groupRepository = groupRepository;
+        this.subjectRepository = subjectRepository;
+        this.personRepository = personRepository;
     }
 
-/*
+
+
     @Bean
     public CommandLineRunner TestMarkService() {
+        Group group = groupRepository.findAll().iterator().next();
+        Person student = personRepository.findAllByType('s').get(0);
+        Person teacher = personRepository.findAllByType('t').get(0);
+        Subject subject = subjectRepository.findAll().iterator().next();
+        System.out.println(group.toString() + '\n' + student + '\n' + teacher + '\n' + subject + '\n');
+
         return args -> {
-            checkCommand(markService::getMarksByGroup, "459195980-5", "getMarksByGroup");
-            checkCommand(markService::getMarksByStudentSecondName,
-                    "Cervantes", "getMarksByStudentSecondName");
-            checkCommand(markService::getMarksBySubject, "Art", "getMarksBySubject");
-            checkCommand(markService::getMarksByTeacher, 202L, "getMarksByTeacher");
+            checkCommand(markService::getMarksByGroup, group.getName(), "getMarksByGroup");
+            checkCommand(markService::getMarksByStudentSecondName, student.getLastName(), "getMarksByStudentSecondName");
+            checkCommand(markService::getMarksBySubject, subject.getName(), "getMarksBySubject");
+            checkCommand(markService::getMarksByTeacher, teacher.getPersonId(), "getMarksByTeacher");
             checkCommandReturningMap(markService::getAvgForGroups, "getAvgForGroups");
             checkCommandReturningMap(markService::getAvgForSubjects, "getAvgForSubjects");
             checkCommandReturningMap(markService::getMarksAVGByStudentOnAllSubjects,
                     201L, "getMarksAVGByStudentOnAllSubjects");
-            markService.addMark(new MarkDTO(500L,201,3,202,3));
+            markService.addMark(new MarkDTO(500L,student.getPersonId(),subject.getSubjectId(),teacher.getPersonId(),3));
         };
     }
 
@@ -61,7 +81,7 @@ public class baseConfig {
             //personService.updatePerson(new PersonDTO(306L,"Carl","Johnson","Sergeevish",3,'t'));
         };
     }
-*/
+
 
     private static <T, K, R extends Collection<K>> void checkCommand(Function<T, R> func, T arg, String methodName) {
         System.out.println(methodName + '\n' + arg);

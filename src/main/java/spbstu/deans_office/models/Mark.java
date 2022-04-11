@@ -8,24 +8,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity(name = "Mark")
-@Table(name = "mark")
+@Entity
+@Table(name = "marks")
 public class Mark {
     @Id
-    @SequenceGenerator(
-            name = "mark_sequence",
-            sequenceName = "mark_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "mark_sequence"
-    )
-    @Column(name = "mark_id")
-    private Long mark_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mark_id", columnDefinition = "bigserial")
+    private Long markID;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -42,8 +33,8 @@ public class Mark {
     @Column(name = "value", nullable = false)
     private Integer value;
 
-    public Mark(Long mark_id, Person student, Subject subject, Person teacher, Integer value) {
-        this.mark_id = mark_id;
+    public Mark(Long markId, Person student, Subject subject, Person teacher, Integer value) {
+        this.markID = markId;
         this.student = student;
         this.subject = subject;
         this.teacher = teacher;
@@ -60,12 +51,12 @@ public class Mark {
     public Mark() {
     }
 
-    public Long getMark_id() {
-        return mark_id;
+    public Long getMarkID() {
+        return markID;
     }
 
-    public void setMark_id(Long mark_id) {
-        this.mark_id = mark_id;
+    public void setMarkID(Long mark_id) {
+        this.markID = mark_id;
     }
 
     public Person getStudent() {
@@ -103,10 +94,10 @@ public class Mark {
     @Override
     public String toString() {
         return "Mark{" +
-               "mark_id=" + mark_id +
-               ", student=" + student.getLast_name() +
+               "mark_id=" + markID +
+               ", student=" + student.getLastName() +
                ", subject=" + subject.getName() +
-               ", teacher=" + teacher.getLast_name() +
+               ", teacher=" + teacher.getLastName() +
                ", value=" + value +
                '}';
     }

@@ -9,26 +9,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity(name = "Subject")
-@Table(name = "subject")
+@Entity
+@Table(name = "subjects")
 public class Subject {
     @Id
-    @SequenceGenerator(
-            name = "subject_sequence",
-            sequenceName = "subject_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "subject_sequence"
-    )
-    @Column(name = "subject_id")
-    private Long subject_id = 0L;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "subject_id", columnDefinition = "bigserial")
+    private Long subjectId;
     @Column(name = "name")
-    private String name = "";
+    private String name;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private Set<Mark> marks;
@@ -40,16 +31,16 @@ public class Subject {
     public Subject() {
     }
 
-    public void setSubject_id(Long subject_id) {
-        this.subject_id = subject_id;
+    public void setSubjectId(Long subjectId) {
+        this.subjectId = subjectId;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public Long getSubject_id() {
-        return subject_id;
+    public Long getSubjectId() {
+        return subjectId;
     }
 
     public String getName() {
@@ -59,7 +50,7 @@ public class Subject {
     @Override
     public String toString() {
         return "Subject{" +
-               "subject_id=" + subject_id +
+               "subject id=" + subjectId +
                ", name='" + name + '\'' +
                '}';
     }

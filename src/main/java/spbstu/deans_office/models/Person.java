@@ -12,34 +12,25 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity(name = "Person")
-@Table(name = "person")
+@Entity
+@Table(name = "people")
 public class Person {
 
     @Id
-    @SequenceGenerator(
-            name = "person_sequence",
-            sequenceName = "person_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "person_sequence"
-    )
-    @Column(name = "person_id")
-    private Long person_id = 0L;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "person_id", columnDefinition = "bigserial")
+    private Long personId;
 
     @Column(name = "first_name")
-    private String first_name = "";
+    private String firstName;
 
     @Column(name = "last_name")
-    private String last_name = "";
+    private String lastName;
 
     @Column(name = "patronymic")
-    private String patronymic = "";
+    private String patronymic;
 
     @ManyToOne
     @JoinColumn(name = "group_id", foreignKey = @ForeignKey(name = "person_group_id_fkey"))
@@ -49,50 +40,50 @@ public class Person {
     private Character type;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private Set<Mark> marks_student;
+    private Set<Mark> marksStudent;
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
-    private Set<Mark> marks_teacher;
+    private Set<Mark> marksTeacher;
 
     public Person() {
     }
 
-    public Person(Long person_id, String first_name,
-                  String last_name, String patronymic, Group group, Character type) {
-        this.person_id = person_id;
-        this.first_name = first_name;
-        this.last_name = last_name;
+    public Person(Long person_id, String firstName,
+                  String lastName, String patronymic, Group group, Character type) {
+        this.personId = person_id;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.patronymic = patronymic;
-       this.group = group;
+        this.group = group;
         this.type = type;
     }
 
-    public Person(String first_name, String last_name, String patronymic, Group group, Character type) {
-        this.first_name = first_name;
-        this.last_name = last_name;
+    public Person(String firstName, String lastName, String patronymic, Group group, Character type) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.patronymic = patronymic;
-       this.group = group;
+        this.group = group;
         this.type = type;
     }
 
-    public Long getPerson_id() {
-        return person_id;
+    public Long getPersonId() {
+        return personId;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPatronymic() {
@@ -105,10 +96,6 @@ public class Person {
 
     public Group getGroup() {
         return group;
-    }
-
-   public void setGroup_id(Group group_id) {
-        this.group = group;
     }
 
     public Type getType() {
@@ -124,9 +111,9 @@ public class Person {
     @Override
     public String toString() {
         return "Person{" +
-               "person_id=" + person_id +
-               ", first_name='" + first_name + '\'' +
-               ", last_name='" + last_name + '\'' +
+               "person_id=" + personId +
+               ", first_name='" + firstName + '\'' +
+               ", last_name='" + lastName + '\'' +
                ", patronymic='" + patronymic + '\'' +
                //", group=" + group.getName() +
                ", type=" + type +

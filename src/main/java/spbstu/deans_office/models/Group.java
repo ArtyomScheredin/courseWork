@@ -9,44 +9,31 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity(name = "Group")
-@Table(name = "group")
+@Entity
+@Table(name = "my_groups")
 public class Group {
 
     @Id
-    @SequenceGenerator(
-            name = "group_sequence",
-            sequenceName = "group_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue (
-            strategy = GenerationType.SEQUENCE,
-            generator = "group_sequence"
-    )
-    @Column(name = "group_id")
-    private Long group_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "group_id", columnDefinition = "bigserial")
+    private Long groupId;
     @Column(name = "name")
-    private String name ="";
+    private String name;
 
-//    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-//    private Set<Person> people;
+   @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private Set<Person> people;
 
     public Group() {
     }
 
-    public Group(String name) {
-        this.name = name;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public Long getGroup_id() {
-        return group_id;
-    }
-
-    public void setGroup_id(Long group_id) {
-        this.group_id = group_id;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public String getName() {
@@ -60,8 +47,9 @@ public class Group {
     @Override
     public String toString() {
         return "Group{" +
-               "group_id=" + group_id +
+               "group_id=" + groupId +
                ", name='" + name + '\'' +
+               ", people=" + people +
                '}';
     }
 }
