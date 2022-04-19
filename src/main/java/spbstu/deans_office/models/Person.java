@@ -94,28 +94,30 @@ public class Person {
         this.patronymic = patronymic;
     }
 
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     public Group getGroup() {
         return group;
     }
 
-    public Type getType() {
-        return (type == 's') ? Type.STUDENT : Type.TEACHER;
+    public Character getType() {
+        return type;
     }
 
-    public void setType(Type type) {
-        this.type = (type == Type.STUDENT) ? 's' : 't';
+    public void setType(Character type) {
+        this.type = type;
     }
-
-    public enum Type {STUDENT, TEACHER}
 
     @Override
     public String toString() {
         return "Person{" +
-               "person_id=" + personId +
-               ", first_name='" + firstName + '\'' +
-               ", last_name='" + lastName + '\'' +
+               "personId=" + personId +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
                ", patronymic='" + patronymic + '\'' +
-               //", group=" + group.getName() +
+               ", group=" + group.getName() +
                ", type=" + type +
                '}';
     }

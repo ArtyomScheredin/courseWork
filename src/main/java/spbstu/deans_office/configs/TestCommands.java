@@ -45,6 +45,7 @@ public class TestCommands {
     }
 
 
+/*
 
     @Bean
     public CommandLineRunner TestMarkService() {
@@ -52,7 +53,7 @@ public class TestCommands {
         Person student = personRepository.findAllByType('s').get(0);
         Person teacher = personRepository.findAllByType('t').get(0);
         Subject subject = subjectRepository.findAll().iterator().next();
-        System.out.println(group.toString() + '\n' + student + '\n' + teacher + '\n' + subject + '\n');
+
 
         return args -> {
             checkCommand(markService::getMarksByGroup, group.getName(), "getMarksByGroup");
@@ -62,8 +63,8 @@ public class TestCommands {
             checkCommandReturningMap(markService::getAvgForGroups, "getAvgForGroups");
             checkCommandReturningMap(markService::getAvgForSubjects, "getAvgForSubjects");
             checkCommandReturningMap(markService::getMarksAVGByStudentOnAllSubjects,
-                    201L, "getMarksAVGByStudentOnAllSubjects");
-            markService.addMark(new MarkDTO(500L,student.getPersonId(),subject.getSubjectId(),teacher.getPersonId(),3));
+                    student.getPersonId(), "getMarksAVGByStudentOnAllSubjects");
+            markService.deleteById(1001L);
         };
     }
 
@@ -89,6 +90,7 @@ public class TestCommands {
         result.stream().limit(PRINT_LIMIT).forEach(System.out::println);
         System.out.println("\n\n");
     }
+*/
 
     private static <R extends Collection<?>> void checkCommand(Supplier<R> func, String methodName) {
         System.out.println(methodName + '\n');

@@ -4,6 +4,7 @@ import spbstu.deans_office.models.Mark;
 import spbstu.deans_office.models.Person;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -18,8 +19,8 @@ public interface MarkRepository extends CrudRepository<Mark, Long> {
     @Query("select m from Mark as m where m.subject.name=?1")
     List<Mark> findAllBySubjectName(String name);
 
-    @Query("select m from Mark as m where m.student.lastName=?1")
-    List<Mark> findAllByStudentName(String lastName);
+    @Query("select m from Mark as m where m.student.personId=?1")
+    List<Mark> findAllByStudent(long id);
 
     @Query("select m from Mark as m where m.teacher.personId=?1")
     List<Mark> findAllByTeacherId(long id);
@@ -50,4 +51,8 @@ public interface MarkRepository extends CrudRepository<Mark, Long> {
 
     @Query("select avg(m.value) from Mark as m where m.student.personId=?1 and m.subject.subjectId=?2 group by m.student")
     Double getAVGByPersonAndSubject(long student_id, long subject_id);
+
+    Set<Mark> findAllByStudent(Person student);
+
+    Set<Mark> findAllByTeacher(Person teacher);
 }

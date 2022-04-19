@@ -3,6 +3,7 @@ package spbstu.deans_office.services.service_impl;
 import spbstu.deans_office.DTO.PersonDTO;
 import spbstu.deans_office.exceptions.ApiRequestException;
 import spbstu.deans_office.models.Group;
+import spbstu.deans_office.models.Mark;
 import spbstu.deans_office.models.Person;
 import spbstu.deans_office.repositories.GroupRepository;
 import spbstu.deans_office.repositories.MarkRepository;
@@ -14,9 +15,13 @@ import spbstu.deans_office.utils.Utils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static spbstu.deans_office.utils.Utils.WRONG_GROUP_ID;
 
 @Service
 public class PersonServiceImpl implements PersonService {
@@ -35,23 +40,14 @@ public class PersonServiceImpl implements PersonService {
 
 
     @Override
-    public Double getAvgForPerson(long student_id) {
-        if (personRepository.existsById(student_id)) {
-            throw new ApiRequestException(Utils.WRONG_STUDENT_ID_MESSAGE + student_id);
-        }
-        return markRepository.getAVGForPerson(student_id);
-    }
+    public Double getAvgForPerson(long studentId) {
+        Optional<Person> optional = personRepository.findById(studentId);
+        Person person = optional.orElseThrow(() -> new ApiRequestException(Utils.WRONG_STUDENT_ID));
 
-    @Override
-    public Map<String, Double> getAVGForStudents() {
-        HashMap<String, Double> result = new HashMap<>();
-        List<Person> teachers = personRepository.findAllByType('s');
-        teachers.forEach(person -> {
-            String name = person.getLastName();
-            Double avgMarks = markRepository.getAVGForStudent(person.getPersonId());
-            result.put(name, avgMarks);
-        });
-        return result;
+        if (!person.getType().equals('s')) {
+            throw new ApiRequestException(Utils.WRONG_STUDENT_ID);
+        }
+        return markRepository.getAVGForPerson(studentId);
     }
 
     @Override
@@ -78,29 +74,33 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void addPerson(PersonDTO person) {
-        Person personToInsert;
-        Group group = groupRepository.findById(person.group_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_GROUP_ID_MESSAGE + person.group_id()));
-        if (person.person_id() == null) {
-            personToInsert = new Person(person.first_name(),
-                    person.last_name(), person.patronymic(), group, person.type());
-        } else {
-            personToInsert = new Person(person.person_id(), person.first_name(),
-                    person.last_name(), person.patronymic(), group, person.type());
-        }
-        personRepository.save(personToInsert);
+    public void updatePerson(PersonDTO dto) {
+        Optional<Person> optionalPerson = personRepository.findById(dto.personId());
+        Person person = optionalPerson.orElseGet(Person::new);
+        Person result = convertPersonDTOToPerson(dto, person);
+        personRepository.save(result);
     }
 
     @Override
-    public void updatePerson(PersonDTO person) {
-        if (!personRepository.existsById(person.person_id())) {
-            throw new ApiRequestException("WRONG person_id");
+    public void addPerson(PersonDTO dto) {
+        Person person = new Person();
+        Person result = convertPersonDTOToPerson(dto, person);
+        personRepository.save(result);
+    }
+
+    private Person convertPersonDTOToPerson(PersonDTO dto, Person person) throws ApiRequestException {
+        Group group = groupRepository.findById(dto.groupId()).orElseThrow(() -> new ApiRequestException(WRONG_GROUP_ID));
+        if ((person.getType() != null) && !dto.type().equals(person.getType())) {
+            Set<Mark> marksToDelete = markRepository.findAllByStudent(person);
+            marksToDelete.addAll(markRepository.findAllByTeacher(person));
+            markRepository.deleteAll(marksToDelete);
         }
-        Group group = groupRepository.findById(person.group_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_GROUP_ID_MESSAGE + person.group_id()));
-        personRepository.save(new Person(person.person_id(), person.first_name(),
-                person.last_name(), person.patronymic(), group, person.type()));
+        person.setType(dto.type());
+        person.setGroup(group);
+        person.setFirstName(dto.firstName());
+        person.setLastName(dto.lastName());
+        person.setPatronymic(dto.patronymic());
+        return person;
     }
 
     @Override
@@ -117,13 +117,26 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Map<String, Double> getAVGForTeachers() {
-        HashMap<String, Double> result = new HashMap<>();
+    public Map<Person, Double> getAVGForTeachers() {
+        HashMap<Person, Double> result = new HashMap<>();
         List<Person> teachers = personRepository.findAllByType('t');
         teachers.forEach(person -> {
             String name = person.getLastName();
             Double avgMarks = markRepository.getAVGForTeacher(person.getPersonId());
-            result.put(name, avgMarks);
+            result.put(person, avgMarks);
+        });
+        return result;
+    }
+
+
+    @Override
+    public Map<Person, Double> getAVGForStudents() {
+        HashMap<Person, Double> result = new HashMap<>();
+        List<Person> teachers = personRepository.findAllByType('s');
+        teachers.forEach(person -> {
+            String name = person.getLastName();
+            Double avgMarks = markRepository.getAVGForStudent(person.getPersonId());
+            result.put(person, avgMarks);
         });
         return result;
     }

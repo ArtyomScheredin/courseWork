@@ -1,5 +1,10 @@
 package spbstu.deans_office.DTO;
 
-public record PersonDTO(Long person_id, String first_name, String last_name,
-                        String patronymic, long group_id, Character type) {
+public record PersonDTO(Long personId,
+                        String firstName,
+                        String lastName,
+                        String patronymic,
+                        long groupId,
+                        Character type) {
+
 }

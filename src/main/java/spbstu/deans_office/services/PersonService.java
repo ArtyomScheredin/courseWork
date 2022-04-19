@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 public interface PersonService {
-    Double getAvgForPerson(long student_id);
-    List<Person> getStudentOrderedByAVGMark();
+
     void deleteIfAVGMarkLessThan(double threshold);
     void deletePersonWithMinimalAVGMark();
     void addPerson(PersonDTO person);
     void updatePerson(PersonDTO person);
+    Double getAvgForPerson(long studentId);
+    List<Person> getStudentOrderedByAVGMark();
     List<Person> getPeopleByGroupId(Long group_id);
     List<Person> getPeopleWithMark(Integer value);
-    Map<String, Double> getAVGForTeachers();
-    Map<String, Double> getAVGForStudents();
+    Map<Person, Double> getAVGForTeachers();
+    Map<Person, Double> getAVGForStudents();
 }

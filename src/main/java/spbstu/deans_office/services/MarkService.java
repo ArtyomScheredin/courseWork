@@ -17,7 +17,7 @@ public interface MarkService {
 
     List<Mark> getMarksByGroup(String groupName);
     List<Mark> getMarksBySubject(String subjectName);
-    List<Mark> getMarksByStudentSecondName(String studentName);
+    List<Mark> getMarksByStudent(long id);
     List<Mark> getMarksByTeacher(long id);
     Map<String, Double> getAvgForGroups();
     Map<String, Double> getAvgForSubjects();

@@ -21,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import static spbstu.deans_office.utils.Utils.MARK_VALUE_HIGHER_BOUND;
+import static spbstu.deans_office.utils.Utils.MARK_VALUE_LOWER_BOUND;
+import static spbstu.deans_office.utils.Utils.WRONG_VALUE;
+
 @Service
 public class MarkServiceImpl implements MarkService {
     private final MarkRepository markRepository;
@@ -38,49 +42,38 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public void updateMark(MarkDTO markDTO) {
-        Person student = personRepository.findById(markDTO.student_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_STUDENT_ID_MESSAGE + markDTO.mark_id()));
-        if (student.getType() != Person.Type.STUDENT) {
-            throw new ApiRequestException(Utils.WRONG_STUDENT_ID_MESSAGE + markDTO.subject_id());
-        }
-
-        Person teacher = personRepository.findById(markDTO.teacher_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + markDTO.teacher_id()));
-        if (student.getType() != Person.Type.TEACHER) {
-            throw new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + markDTO.teacher_id());
-        }
-
-        Subject subject = subjectRepository.findById(markDTO.subject_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_SUBJECT_ID_MESSAGE + markDTO.subject_id()));
-
-        markRepository.findById(markDTO.mark_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_MARK_ID_MESSAGE + markDTO.mark_id()));
-
-        markRepository.save(new Mark(markDTO.mark_id(), student, subject, teacher, markDTO.value()));
+    public void updateMark(MarkDTO markNew) {
+        Optional<Mark> optionalMark = markRepository.findById(markNew.markId());
+        Mark mark = optionalMark.orElseGet(Mark::new);
+        Mark result = convertMarkDTOToMark(markNew, mark);
+        markRepository.save(result);
     }
 
     @Override
-    public void addMark(MarkDTO markDTO) {
-        Person student = personRepository.findById(markDTO.student_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_STUDENT_ID_MESSAGE + markDTO.student_id()));
-        if (student.getType() != Person.Type.STUDENT) {
-            throw new ApiRequestException(Utils.WRONG_STUDENT_ID_MESSAGE + markDTO.student_id());
-        }
+    public void addMark(MarkDTO markNew) {
+        Mark mark = new Mark(null, null, null, markNew.value());
+        Mark result = convertMarkDTOToMark(markNew, mark);
+        markRepository.save(result);
+    }
 
-        Person teacher = personRepository.findById(markDTO.teacher_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + markDTO.teacher_id()));
-        if (teacher.getType() != Person.Type.TEACHER) {
-            throw new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + markDTO.teacher_id());
+    private Mark convertMarkDTOToMark(MarkDTO dto, Mark mark) throws ApiRequestException {
+        if ((dto.value() < MARK_VALUE_LOWER_BOUND) || (dto.value() > MARK_VALUE_HIGHER_BOUND)) {
+            throw new ApiRequestException(WRONG_VALUE + dto.value());
         }
-
-        Subject subject = subjectRepository.findById(markDTO.subject_id())
-                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_SUBJECT_ID_MESSAGE + markDTO.subject_id()));
-
-        if (markRepository.existsById(markDTO.mark_id())) {
-            throw new ApiRequestException(Utils.WRONG_MARK_ID_MESSAGE + markDTO.mark_id());
+        Subject subject = subjectRepository.findById(dto.subjectId())
+                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_SUBJECT_ID + dto.subjectId()));
+        Person student = personRepository.findById(dto.studentId())
+                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_STUDENT_ID + dto.studentId()));
+        Person teacher = personRepository.findById(dto.teacherId())
+                .orElseThrow(() -> new ApiRequestException(Utils.WRONG_TEACHER_ID + dto.teacherId()));
+        if (!student.getType().equals('s') && !teacher.getType().equals('t')) {
+            throw new ApiRequestException(Utils.WRONG_STUDENT_ID + "or" + Utils.WRONG_TEACHER_ID);
         }
-        markRepository.save(new Mark(student, subject, teacher, markDTO.value()));
+        mark.setStudent(student);
+        mark.setTeacher(teacher);
+        mark.setSubject(subject);
+        mark.setValue(dto.value());
+        return mark;
     }
 
     @Override
@@ -88,7 +81,7 @@ public class MarkServiceImpl implements MarkService {
         try {
             markRepository.deleteById(mark_id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ApiRequestException(Utils.WRONG_MARK_ID_MESSAGE + mark_id);
+            throw new ApiRequestException(Utils.WRONG_MARK_ID + mark_id);
         }
     }
 
@@ -96,7 +89,7 @@ public class MarkServiceImpl implements MarkService {
     public List<Mark> getMarksByGroup(String groupName) {
         List<Mark> result = markRepository.findAllByGroupName(groupName);
         if (result.isEmpty()) {
-            throw new ApiRequestException(Utils.WRONG_GROUP_NAME_MESSAGE + groupName);
+            throw new ApiRequestException(Utils.WRONG_GROUP_NAME + groupName);
         }
         return result;
     }
@@ -105,16 +98,16 @@ public class MarkServiceImpl implements MarkService {
     public List<Mark> getMarksBySubject(String subjectName) {
         List<Mark> result = markRepository.findAllBySubjectName(subjectName);
         if (result.isEmpty()) {
-            throw new ApiRequestException(Utils.WRONG_GROUP_ID_MESSAGE);
+            throw new ApiRequestException(Utils.WRONG_SUBJECT_NAME + subjectName);
         }
         return result;
     }
 
     @Override
-    public List<Mark> getMarksByStudentSecondName(String studentName) {
-        List<Mark> result = markRepository.findAllByStudentName(studentName);
+    public List<Mark> getMarksByStudent(long id) {
+        List<Mark> result = markRepository.findAllByStudent(id);
         if (result.isEmpty()) {
-            throw new ApiRequestException(Utils.WRONG_GROUP_ID_MESSAGE);
+            throw new ApiRequestException(Utils.WRONG_STUDENT_NAME);
         }
         return result;
     }
@@ -144,22 +137,28 @@ public class MarkServiceImpl implements MarkService {
     @Override
     public List<Mark> getMarksByTeacher(long id) {
         Optional<Person> teacher = personRepository.findById(id);
-        teacher.orElseThrow(() -> new ApiRequestException(Utils.WRONG_TEACHER_ID_MESSAGE + id));
-        if (!teacher.get().getType().equals(Person.Type.TEACHER)) {
+        teacher.orElseThrow(() -> new ApiRequestException(Utils.WRONG_TEACHER_ID + id));
+        if (!teacher.get().getType().equals('t')) {
             throw new ApiRequestException("Can't find teacher with the name" + id);
         }
         return markRepository.findAllByTeacherId(id);
     }
 
     @Override
-    public Map<String, Double> getMarksAVGByStudentOnAllSubjects(long student_id) {
+    public Map<String, Double> getMarksAVGByStudentOnAllSubjects(long studentId) throws ApiRequestException {
         Map<String, Double> result = new HashMap<>();
+        Person person = personRepository.findById(studentId)
+                .orElseThrow(() -> new ApiRequestException("Can't find student with id" + studentId));
+        if (person.getType().equals('t')) {
+            throw new ApiRequestException("Can't find student with id" + studentId);
+        }
         subjectRepository.findAll().forEach(subject -> {
             String subjectName = subject.getName();
-            Double avgSubject = markRepository.getAVGByPersonAndSubject(student_id, subject.getSubjectId());
+            Double avgSubject = markRepository.getAVGByPersonAndSubject(studentId, subject.getSubjectId());
             if (avgSubject != null) {
                 result.put(subjectName, avgSubject);
-            }});
+            }
+        });
         return result;
     }
 }
