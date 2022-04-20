@@ -95,9 +95,9 @@ public class Mark {
     public String toString() {
         return "Mark{" +
                "markId=" + markID +
-               ", student=" + student.getLastName() +
-               ", subject=" + subject.getName() +
-               ", teacher=" + teacher.getLastName() +
+               ", student=" + student.getPersonId() +
+               ", subject=" + subject.getSubjectId() +
+               ", teacher=" + teacher.getPersonId() +
                ", value=" + value +
                '}';
     }

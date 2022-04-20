@@ -14,7 +14,7 @@ public class Utils {
     public final static String WRONG_GROUP_NAME = "WRONG group name. Can't find group with name ";
     public final static String WRONG_PERSON_ID = "WRONG person id. Can't find person with id ";
     public final static String WRONG_VALUE = "WRONG value. Value must be between "
-                                             + MARK_VALUE_LOWER_BOUND + " to " + MARK_VALUE_HIGHER_BOUND;
+                                             + MARK_VALUE_LOWER_BOUND + " to " + MARK_VALUE_HIGHER_BOUND + ". Actual is";
 
     public static record Pair<T, K>(T first, K second) {
     }

@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "spbstu.deans_office.security.JwtProperties",
+      "sourceType": "spbstu.deans_office.security.JwtProperties"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

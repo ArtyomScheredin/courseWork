@@ -14,10 +14,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "subjects")
 public class Subject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subject_id", columnDefinition = "bigserial")
     private Long subjectId;
+
     @Column(name = "name")
     private String name;
 

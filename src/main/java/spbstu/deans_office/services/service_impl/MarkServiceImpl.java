@@ -44,16 +44,18 @@ public class MarkServiceImpl implements MarkService {
     @Override
     public void updateMark(MarkDTO markNew) {
         Optional<Mark> optionalMark = markRepository.findById(markNew.markId());
+        System.out.println(optionalMark.isPresent());
         Mark mark = optionalMark.orElseGet(Mark::new);
-        Mark result = convertMarkDTOToMark(markNew, mark);
-        markRepository.save(result);
+        convertMarkDTOToMark(markNew, mark);
+        System.out.println(mark);
+        markRepository.save(mark);
     }
 
     @Override
     public void addMark(MarkDTO markNew) {
-        Mark mark = new Mark(null, null, null, markNew.value());
-        Mark result = convertMarkDTOToMark(markNew, mark);
-        markRepository.save(result);
+        Mark mark = new Mark();
+        convertMarkDTOToMark(markNew, mark);
+        markRepository.save(mark);
     }
 
     private Mark convertMarkDTOToMark(MarkDTO dto, Mark mark) throws ApiRequestException {
@@ -116,7 +118,7 @@ public class MarkServiceImpl implements MarkService {
     public Map<String, Double> getAvgForGroups() {
         Map<String, Double> result = new HashMap<>();
         groupRepository.findAll().forEach(group -> {
-            String name = groupRepository.findById(group.getGroupId()).get().getName();
+            String name = group.getName();
             Double averageMark = markRepository.getAVGForGroup(group.getGroupId());
             result.put(name, averageMark);
         });
@@ -127,7 +129,7 @@ public class MarkServiceImpl implements MarkService {
     public Map<String, Double> getAvgForSubjects() {
         Map<String, Double> result = new HashMap<>();
         subjectRepository.findAll().forEach(group -> {
-            String name = subjectRepository.findById(group.getSubjectId()).get().getName();
+            String name = group.getName();
             Double averageMark = markRepository.getAVGForSubject(group.getSubjectId());
             result.put(name, averageMark);
         });
