@@ -1,7 +1,9 @@
 package spbstu.deans_office;
 
+import spbstu.deans_office.repositories.MyUserRepository;
 import spbstu.deans_office.security.JwtProperties;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

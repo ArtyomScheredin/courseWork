@@ -1,8 +1,7 @@
 package spbstu.deans_office;
 
-import spbstu.deans_office.models.User;
-import spbstu.deans_office.repositories.MarkRepository;
-import spbstu.deans_office.repositories.UserRepository;
+import spbstu.deans_office.models.MyUser;
+import spbstu.deans_office.repositories.MyUserRepository;
 
 import java.util.Collections;
 
@@ -15,18 +14,19 @@ import org.springframework.stereotype.Component;
 public class TestDataInit implements CommandLineRunner {
 
     @Autowired
-    UserRepository userRepository;
+    MyUserRepository myUserRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
-        userRepository.save(new User("user",
-                passwordEncoder.encode("123"),
-                Collections.singletonList("ROLE_USER")));
-        userRepository.save(new User("admin",
-                passwordEncoder.encode("123"),
-                Collections.singletonList("ROLE_ADMIN")));
+
+//        myUserRepository.save(new MyUser("user",
+//                passwordEncoder.encode("123"),
+//                Collections.singletonList("ROLE_USER")));
+//        myUserRepository.save(new MyUser("admin",
+//                passwordEncoder.encode("123"),
+//                Collections.singletonList("ROLE_ADMIN")));
     }
 }

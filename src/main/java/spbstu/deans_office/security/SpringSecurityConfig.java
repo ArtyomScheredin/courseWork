@@ -38,10 +38,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "**").hasRole("USER")
-                .antMatchers(HttpMethod.PUT, "**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "**").hasRole("ADMIN")
+                .antMatchers("/auth/signin").permitAll()
+//                .antMatchers(HttpMethod.PUT, "**").hasRole("ADMIN")
+//                .antMatchers(HttpMethod.POST, "**").hasRole("ADMIN")
+//                .antMatchers(HttpMethod.DELETE, "**").hasRole("ADMIN")
+                .anyRequest().authenticated()
                 .and()
                 .apply(new JwtSecurityConfigurer(jwtTokenProvider));
     }

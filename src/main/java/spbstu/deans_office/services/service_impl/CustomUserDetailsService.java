@@ -1,6 +1,6 @@
 package spbstu.deans_office.services.service_impl;
 
-import spbstu.deans_office.repositories.UserRepository;
+import spbstu.deans_office.repositories.MyUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private MyUserRepository myUserRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findUserByUserName(username)
+        return myUserRepository.findUserByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 }
